@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: BrainWorksExams
+  datasource:
+    url: jdbc:mysql://localhost:3306/exams?useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: secret
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  mvc:
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .jsp
+  sql:
+    init:
+      mode: embedded
+server:
+  port: 8080
+  servlet:
+    context-path: /exam-api/
+
+logging:
+  level:
+    '[com.brainworksexams]': DEBUG
+    '[org.springframework.web]': INFO
+    '[org.hibernate.type.descriptor.sql]': INFO

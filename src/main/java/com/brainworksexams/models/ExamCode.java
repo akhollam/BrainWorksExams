@@ -8,6 +8,6 @@ import lombok.Data;
 public class ExamCode {
 
 	@JsonProperty("exam_code")
-	String examCode;
+	private String examCode;
 
 }

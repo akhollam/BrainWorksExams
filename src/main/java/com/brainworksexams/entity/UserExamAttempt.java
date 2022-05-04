@@ -26,7 +26,7 @@ public class UserExamAttempt {
 	private Long id;
 	
 	@ManyToOne
-	private UserExamRegistration userExam;
+	private UserExamRegistration userExamRegistration;
 	
 	private LocalDateTime attemptDateTime;
 	

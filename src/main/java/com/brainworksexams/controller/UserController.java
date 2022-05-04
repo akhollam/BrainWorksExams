@@ -2,10 +2,12 @@ package com.brainworksexams.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,8 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.brainworksexams.models.ExamAttemptCode;
 import com.brainworksexams.models.ExamCode;
-import com.brainworksexams.models.ExamDetails;
+import com.brainworksexams.models.ExamRespDto;
 import com.brainworksexams.models.UserDto;
+import com.brainworksexams.models.UserRegDto;
+import com.brainworksexams.service.ExamAttemptService;
 import com.brainworksexams.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,44 +31,42 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/user")
 @Tag(name = "User API", description = "User & Exams Details.")
 public class UserController {
-	
+
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	private ExamAttemptService examAttemptService;
+
 	@PostMapping
 	@ResponseStatus(code = HttpStatus.CREATED)
-	public void createUser(@RequestBody UserDto userDto) {
+	public void createUser(@Valid @RequestBody UserRegDto userDto) {
 		userService.createUser(userDto);
 	}
 
+	@GetMapping()
 	@Operation(summary = "Get user information.")
-	@GetMapping("/{user_code}")
-	public UserDto getUser(@PathVariable("user_code") Long userId) {
-		return null;
+	public UserDto getUser(Authentication authentication) {
+		log.debug("getName - {}", authentication.getName());
+		return userService.getUserInfo(authentication.getName());
 	}
 
 	@Operation(summary = "List all user registered exams.")
-	@GetMapping("/{user_code}/list-register-exams")
-	@ResponseStatus(code = HttpStatus.CREATED)
-	public List<ExamCode> listRegisteredExams() {
-		return null;
+	@GetMapping("/list-exams")
+	public List<ExamRespDto> listRegisteredExams(Authentication authentication) {
+		return userService.listExams(authentication.getName());
 	}
 
-	@PostMapping("/{user_code}/register")
+	@PostMapping("/register-exam")
 	@ResponseStatus(code = HttpStatus.CREATED)
-	public void registerExam(@RequestBody ExamCode examCode) {
-
+	public void registerExam(Authentication authentication, @RequestBody ExamCode examCode) {
+		userService.registerExam(authentication.getName(), examCode);
 	}
 
-	@GetMapping("/{user_code}/start/{exam_code}")
-	public ExamDetails examDetails() {
-		return new ExamDetails();
-	}
-
-	@PostMapping("/{user_code}/start/{exam_code}")
+	@PostMapping("/{exam_code}/start-exam")
 	@ResponseStatus(code = HttpStatus.CREATED)
-	public ExamAttemptCode startExam(@RequestBody ExamCode examCode) {
-		return new ExamAttemptCode();
+	public ExamAttemptCode startExam(Authentication authentication, @RequestBody ExamCode examCode) {
+		return examAttemptService.startExam(authentication.getName(), examCode.getExamCode());
 	}
 
 }

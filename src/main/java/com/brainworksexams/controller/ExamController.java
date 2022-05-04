@@ -67,13 +67,13 @@ public class ExamController {
 	@DeleteMapping("/exam/{exam_code}/question/{question_code}")
 	public void deleteExamQuestion(@PathVariable("customer_id") Long customerId,
 			@PathVariable("exam_code") String examCode, @PathVariable("question_code") String questionCode) {
-		
+		questionsService.deleteExamQuestion(customerId, examCode, questionCode);
 	}
 
 	@PostMapping("/exam/{exam_code}/question")
 	@ResponseStatus(value = HttpStatus.CREATED)
 	public void addExamQuestion(@PathVariable("customer_id") Long customerId,
 			@PathVariable("exam_code") String examCode, @RequestBody QuestionDto questionDto) {
-		
+		questionsService.addExamQuestion(customerId, examCode, questionDto);
 	}
 }

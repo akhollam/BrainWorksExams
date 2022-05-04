@@ -10,6 +10,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -32,14 +34,13 @@ public class UserExamRegistration {
 	@JoinColumn(name = "exam_id")
 	private Exam exam;
 
-	private LocalDateTime registrationTime;
-	
-	@OneToMany(mappedBy = "userExam")
-	List<UserExamAttempt> userExamAttempts;
-	
+	@Cascade(CascadeType.PERSIST)
+	@OneToMany(mappedBy = "userExamRegistration")
+	private List<UserExamAttempt> userExamAttempts;
+
 	@CreationTimestamp
 	private LocalDateTime createdDatetime;
-	
+
 	@UpdateTimestamp
 	private LocalDateTime updatedDateTime;
 

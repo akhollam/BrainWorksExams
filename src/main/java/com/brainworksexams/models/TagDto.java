@@ -2,11 +2,13 @@ package com.brainworksexams.models;
 
 import javax.validation.constraints.NotEmpty;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-public class AnswerDto {
+@AllArgsConstructor
+public class TagDto {
 
 	@NotEmpty
-	private String text;
+	private String name;
 }

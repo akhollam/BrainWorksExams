@@ -22,7 +22,7 @@ import lombok.Data;
 @Data
 @Entity
 public class Question {
-
+	
 	@Id
 	@GeneratedValue
 	private Long id;

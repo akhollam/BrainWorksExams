@@ -17,9 +17,7 @@ import com.brainworksexams.models.ExamRespDto;
 import com.brainworksexams.service.CustomerService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 @RequestMapping("/questions")
 @Tag(name = "Questions API", description = "Questions details. ")
@@ -36,6 +34,7 @@ public class QuestionsController {
 	
 	@GetMapping("/exam")
 	public List<ExamRespDto> listExams(@PathVariable("customer_id") Long customerId) {
+			
 		return null; //customerService.listExams(customerId);
 	}
 }

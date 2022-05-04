@@ -1,6 +1,5 @@
 package com.brainworksexams.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.brainworksexams.entity.Customer;
 import com.brainworksexams.entity.Exam;
+import com.brainworksexams.exceptions.NotFoundException;
 import com.brainworksexams.models.CustomerDto;
 import com.brainworksexams.models.ExamRespDto;
 import com.brainworksexams.repository.CustomerRepository;
@@ -43,6 +43,7 @@ public class CustomerServiceimpl implements CustomerService {
 	public ExamRespDto createExam(Long customerId, ExamRespDto exam) {
 
 		Optional<Customer> cust = customerRepository.findById(customerId);
+		
 		cust.ifPresent(c -> {
 			Exam e = new Exam();
 			e.setName(exam.getName());
@@ -50,8 +51,10 @@ public class CustomerServiceimpl implements CustomerService {
 			e.setGlobalExamCode(Utility.uuid());
 			e.setCustomer(c);
 			examsRepository.save(e);
+			return;
 		});
-		return null;
+		
+		throw new NotFoundException("Customer not found. ");
 	}
 
 	@Override
@@ -62,7 +65,7 @@ public class CustomerServiceimpl implements CustomerService {
 			return customer.getExams().stream().map(ex -> mapper.map(ex, ExamRespDto.class))
 					.collect(Collectors.toList());
 		}
-		return new ArrayList<ExamRespDto>();
+		throw new NotFoundException("No exams found.");
 	}
 
 	@Override
@@ -77,6 +80,6 @@ public class CustomerServiceimpl implements CustomerService {
 		if (cust.isPresent()) {
 			return mapper.map(cust.get(), CustomerDto.class);
 		}
-		return null;
+		throw new NotFoundException("Customer not found. ");
 	}
 }

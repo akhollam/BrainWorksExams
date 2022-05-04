@@ -25,4 +25,10 @@ logging:
   level:
     '[com.brainworksexams]': DEBUG
     '[org.springframework.web]': INFO
-    '[org.hibernate.type.descriptor.sql]': INFO
+    '[org.hibernate.type.descriptor.sql]': TRACE
+    '[org.springframework.security]': INFO
+    
+springdoc:
+  swagger-ui:
+    oauth:
+      use-basic-authentication-with-access-code-grant: true

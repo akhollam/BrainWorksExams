@@ -8,6 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -30,6 +32,7 @@ public class Options {
 	private Question question;
 
 	@ManyToOne
+	@Cascade(CascadeType.PERSIST)
 	private Answer answer;
 	
 	@CreationTimestamp

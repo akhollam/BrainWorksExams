@@ -1,11 +1,16 @@
 package com.brainworksexams.service;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.brainworksexams.entity.Exam;
+import com.brainworksexams.entity.Options;
+import com.brainworksexams.entity.Question;
 import com.brainworksexams.entity.User;
 import com.brainworksexams.entity.UserExamAttempt;
 import com.brainworksexams.entity.UserExamRegistration;
@@ -14,6 +19,7 @@ import com.brainworksexams.exams.ExamInfo;
 import com.brainworksexams.exams.ExamKey;
 import com.brainworksexams.exams.ExamQuestion;
 import com.brainworksexams.exams.ExamQuestionAndAnswer;
+import com.brainworksexams.exams.ExamQuestionOption;
 import com.brainworksexams.exams.ExamResult;
 import com.brainworksexams.exams.ExamsInProgress;
 import com.brainworksexams.exceptions.NotFoundException;
@@ -26,6 +32,12 @@ import com.brainworksexams.util.Utility;
 
 import lombok.extern.slf4j.Slf4j;
 
+
+/**
+ * 
+ * @author AKhollam
+ *
+ */
 @Slf4j
 @Service
 public class ExamAttemptServiceImpl implements ExamAttemptService {
@@ -68,6 +80,10 @@ public class ExamAttemptServiceImpl implements ExamAttemptService {
 		return null;
 	}
 
+	/**
+	 * 
+	 * 
+	 */
 	@Override
 	public ExamAttemptCode startExam(String username, String examCode) {
 
@@ -106,6 +122,28 @@ public class ExamAttemptServiceImpl implements ExamAttemptService {
 
 		ExamInfo info = new ExamInfo();
 		info.setDurationInMinutes(exam.getDurationInMinutes());
+
+		List<Question> examQuestions = exam.getQuestions();
+		List<ExamQuestion> examQuestionList = new ArrayList<>();
+		for (Question question : examQuestions) {
+
+			ExamQuestion examQuestion = new ExamQuestion();
+			examQuestion.setQuestionCode(question.getGlobalQuestionCode());
+			examQuestion.setQuestionText(question.getText());
+
+			List<ExamQuestionOption> examQuestionOptionList = new ArrayList<>();
+			for (Options option : question.getOptions()) {
+				ExamQuestionOption examQuestionOption = new ExamQuestionOption();
+				examQuestionOption.setOptionText(option.getAnswer().getText());
+				examQuestionOption.setOptionId(option.getAnswer().getId());
+				examQuestionOptionList.add(examQuestionOption);
+			}
+			examQuestion.setOption(examQuestionOptionList);
+			examQuestionList.add(examQuestion);
+		}
+		
+		Collections.shuffle(examQuestionList);
+		info.setQuestions(examQuestionList);
 		return info;
 
 	}

@@ -20,6 +20,6 @@ public class ExamsInProgress {
 	}
 	
 	public void addInprogressExam(ExamKey key, ExamInfo val) {
-
+		inprogressExams.put(key, val);
 	}
 }

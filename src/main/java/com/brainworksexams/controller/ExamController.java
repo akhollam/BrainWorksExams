@@ -1,17 +1,24 @@
 package com.brainworksexams.controller;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.brainworksexams.models.ExamRespDto;
 import com.brainworksexams.models.QuestionCode;
@@ -31,19 +38,19 @@ public class ExamController {
 
 	@Autowired
 	private CustomerService customerService;
-	
+
 	@Autowired
-	private ExamService examService; 
-	
+	private ExamService examService;
+
 	@Autowired
 	private QuestionsService questionsService;
 
 	@PostMapping("/exam")
 	@ResponseStatus(value = HttpStatus.CREATED)
-	public ExamRespDto createExam(@PathVariable("customer_id") Long customerId, @RequestBody ExamRespDto exam) {
-		
+	public void createExam(@PathVariable("customer_id") Long customerId, @RequestBody ExamRespDto exam) {
+
 		log.debug("Creating exam - {}", exam.getName());
-		return customerService.createExam(customerId, exam);
+		customerService.createExam(customerId, exam);
 	}
 
 	@GetMapping("/list-exams")
@@ -51,10 +58,22 @@ public class ExamController {
 		return customerService.listExams(customerId);
 	}
 
+	@GetMapping("/exam/{exam_code}")
+	public ExamRespDto getExam(@PathVariable("customer_id") Long customerId,
+			@PathVariable("exam_code") String examCode) {
+		return examService.getExam(customerId, examCode);
+	}
+
 	@GetMapping("/exam/{exam_code}/list-questions")
 	public List<QuestionDto> listExamQuestion(@PathVariable("customer_id") Long customerId,
 			@PathVariable("exam_code") String examCode) {
 		return examService.listQuestions(customerId, examCode);
+	}
+
+	@PostMapping("/exam/{exam_code}/publish")
+	@ResponseStatus(code = HttpStatus.CREATED)
+	public void publishExam(@PathVariable("customer_id") Long customerId, @PathVariable("exam_code") String examCode) {
+		questionsService.publishExam(customerId, examCode);
 	}
 
 	@PostMapping("/exam/{exam_code}/map-question")
@@ -70,10 +89,39 @@ public class ExamController {
 		questionsService.deleteExamQuestion(customerId, examCode, questionCode);
 	}
 
+	@DeleteMapping("/exam/{exam_code}")
+	public void deleteExam(@PathVariable("customer_id") Long customerId, @PathVariable("exam_code") String examCode) {
+		questionsService.deleteExam(customerId, examCode);
+	}
+
 	@PostMapping("/exam/{exam_code}/question")
 	@ResponseStatus(value = HttpStatus.CREATED)
 	public void addExamQuestion(@PathVariable("customer_id") Long customerId,
 			@PathVariable("exam_code") String examCode, @RequestBody QuestionDto questionDto) {
 		questionsService.addExamQuestion(customerId, examCode, questionDto);
 	}
+
+	@PostMapping(path = "/exam/{exam_code}/upload-questions", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@ResponseStatus(value = HttpStatus.CREATED)
+	public ResponseEntity<String> uploadFile(@PathVariable("exam_code") String examCode, @RequestParam("file") MultipartFile uploadfile) {
+
+		if (uploadfile.isEmpty()) {
+			return new ResponseEntity<String>("please select a file!", HttpStatus.OK);
+		}
+
+		try {
+
+			questionsService.saveUploadedFiles(Arrays.asList(uploadfile));
+
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+
+		return new ResponseEntity<String>("Successfully uploaded - " + uploadfile.getOriginalFilename(),
+				new HttpHeaders(), HttpStatus.OK);
+
+	}
+
+	
+
 }

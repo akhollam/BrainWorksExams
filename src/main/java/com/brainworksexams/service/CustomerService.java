@@ -9,7 +9,7 @@ public interface CustomerService {
 
 	public void createCustomer(CustomerDto customer);
 
-	public ExamRespDto createExam(Long customerId, ExamRespDto exam);
+	public void createExam(Long customerId, ExamRespDto exam);
 
 	public List<ExamRespDto> listExams(Long customerId);
 

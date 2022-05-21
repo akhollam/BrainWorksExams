@@ -1,12 +1,27 @@
 package com.brainworksexams.service;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.brainworksexams.entity.Answer;
 import com.brainworksexams.entity.Exam;
@@ -98,6 +113,54 @@ public class QuestionsServiceImpl implements QuestionsService {
 			}
 			examsRepository.saveAndFlush(e);
 		});
+	}
+
+	@Override
+	@Transactional
+	public void deleteExam(Long customerId, String examCode) {
+		examsRepository.findByGlobalExamCode(examCode).ifPresent(ex -> {
+			ex.setDeleted(true);
+			examsRepository.save(ex);
+		});
+	}
+
+	@Override
+	public void publishExam(Long customerId, String examCode) {
+		examsRepository.findByGlobalExamCode(examCode).ifPresent(ex -> {
+			ex.setPublish(true);
+			examsRepository.save(ex);
+		});
+	}
+
+	@Override
+	public void saveUploadedFiles(List<MultipartFile> files) throws Exception {
+
+		for (MultipartFile file : files) {
+
+			if (file.isEmpty()) {
+				continue;
+			}
+
+			InputStream stream = new ByteArrayInputStream(file.getBytes());
+			Workbook workbook = new XSSFWorkbook(stream);
+			Sheet sheet = workbook.getSheetAt(0);
+
+			Map<Integer, List<String>> data = new HashMap<>();
+			int i = 0;
+			for (Row row : sheet) {
+				data.put(i, new ArrayList<String>());
+				for (Cell cell : row) {
+					data.get(i).add(cell.getStringCellValue());
+				}
+				i++;
+			}
+			workbook.close();
+			log.debug("-------------------------------");
+			log.debug("{}", data);
+			log.debug("-------------------------------");
+
+		}
+
 	}
 
 }

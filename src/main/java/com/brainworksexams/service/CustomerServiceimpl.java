@@ -40,19 +40,21 @@ public class CustomerServiceimpl implements CustomerService {
 	}
 
 	@Override
-	public ExamRespDto createExam(Long customerId, ExamRespDto exam) {
+	public void createExam(Long customerId, ExamRespDto exam) {
 
 		Optional<Customer> cust = customerRepository.findById(customerId);
 		
-		cust.ifPresent(c -> {
+		if(cust.isPresent()) {
+			Customer c = cust.get();
 			Exam e = new Exam();
 			e.setName(exam.getName());
 			e.setDurationInMinutes(exam.getDurationInMinutes());
+			e.setDescription(exam.getDescription());
 			e.setGlobalExamCode(Utility.uuid());
 			e.setCustomer(c);
 			examsRepository.save(e);
 			return;
-		});
+		};
 		
 		throw new NotFoundException("Customer not found. ");
 	}

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.brainworksexams.entity.Exam;
 import com.brainworksexams.entity.Question;
 import com.brainworksexams.exceptions.NotFoundException;
+import com.brainworksexams.models.ExamRespDto;
 import com.brainworksexams.models.QuestionDto;
 import com.brainworksexams.repository.ExamsRepository;
 
@@ -26,7 +27,7 @@ public class ExamServiceImpl implements ExamService {
 	@Override
 	public List<QuestionDto> listQuestions(Long customerId, String examCode) {
 
-		Optional<Exam> exam = examsRepository.findByGlobalExamCode(examCode);
+		Optional<Exam> exam = examsRepository.findDetailsByGlobalExamCode(examCode);
 		if (exam.isPresent()) {
 			Exam e = exam.get();
 			List<Question> que = e.getQuestions();
@@ -35,6 +36,16 @@ public class ExamServiceImpl implements ExamService {
 			}).collect(Collectors.toList());
 		}
 
+		throw new NotFoundException("Exam not found.");
+	}
+
+	@Override
+	public ExamRespDto getExam(Long customerId, String examCode) {
+		Optional<Exam> exam = examsRepository.findByGlobalExamCode(examCode);
+		if (exam.isPresent()) {
+			Exam e = exam.get();
+			return mapper.map(e, ExamRespDto.class);
+		}
 		throw new NotFoundException("Exam not found.");
 	}
 

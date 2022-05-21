@@ -24,6 +24,10 @@ public class Customer {
 	private Long id;
 	
 	private String name;
+	
+	private String description;
+	
+	private String imageUrl;
 
 	@Cascade(CascadeType.PERSIST)
 	@OneToMany(mappedBy = "customer")

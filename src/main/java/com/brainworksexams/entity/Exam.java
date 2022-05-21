@@ -13,13 +13,17 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.Where;
 
 import lombok.Data;
 
 @Data
 @Entity
+@Where(clause = "deleted=false")
 public class Exam {
 
 	@Id
@@ -28,9 +32,15 @@ public class Exam {
 
 	private String name;
 	
+	private String description;
+	
 	private short durationInMinutes;
 	
 	private boolean active;
+	
+	private boolean publish;
+	
+	private boolean deleted;
 
 	@ManyToOne
 	private Customer customer;
@@ -39,6 +49,7 @@ public class Exam {
 	private List<UserExamRegistration> userExams;
 
 	@ManyToMany
+	@Cascade(CascadeType.DETACH)
 	@JoinTable(name = "exam_questions", 	
 		joinColumns = @JoinColumn(name = "exam_id"), 
 		inverseJoinColumns = @JoinColumn(name = "question_id"))

@@ -20,10 +20,21 @@ spring:
   sql:
     init:
       mode: embedded
+  profiles:
+    active:
+    - ${active_profile:qa}
 server:
   port: 8080
   servlet:
     context-path: /exam-api/
+
+jwt:
+  secret : ThisIsSomeComplexKey
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8900/eureka
 
 logging:
   level:

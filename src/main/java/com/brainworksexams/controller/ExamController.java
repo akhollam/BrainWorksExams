@@ -55,7 +55,8 @@ public class ExamController {
 
 	@GetMapping("/list-exams")
 	public List<ExamRespDto> listExams(@PathVariable("customer_id") Long customerId) {
-		return customerService.listExams(customerId);
+		List<ExamRespDto> list =  customerService.listExams(customerId);
+		return list;
 	}
 
 	@GetMapping("/exam/{exam_code}")
@@ -106,7 +107,7 @@ public class ExamController {
 	public ResponseEntity<String> uploadFile(@PathVariable("exam_code") String examCode, @RequestParam("file") MultipartFile uploadfile) {
 
 		if (uploadfile.isEmpty()) {
-			return new ResponseEntity<String>("please select a file!", HttpStatus.OK);
+			return new ResponseEntity<>("please select a file!", HttpStatus.OK);
 		}
 
 		try {
@@ -117,7 +118,7 @@ public class ExamController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 
-		return new ResponseEntity<String>("Successfully uploaded - " + uploadfile.getOriginalFilename(),
+		return new ResponseEntity<>("Successfully uploaded - " + uploadfile.getOriginalFilename(),
 				new HttpHeaders(), HttpStatus.OK);
 
 	}

@@ -3,6 +3,7 @@ package com.brainworksexams.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +27,9 @@ public class CustomerController {
 
 	@Autowired
 	private CustomerService customerService;
+	
+	@Autowired
+	private Environment environment;
 
 	@PostMapping
 	@ResponseStatus(value = HttpStatus.CREATED)
@@ -35,12 +39,14 @@ public class CustomerController {
 	}
 
 	@GetMapping("/list-customer")
-	private List<CustomerDto> listAllCustomers() {
+	public List<CustomerDto> listAllCustomers() {
 		return customerService.listAllCustomers();
 	}
 
 	@GetMapping("/{customer_id}")
-	private CustomerDto getCustomer(@PathVariable("customer_id") Long customerId) {
-		return customerService.getCustomer(customerId);
+	public CustomerDto getCustomer(@PathVariable("customer_id") Long customerId) {
+		CustomerDto dto = customerService.getCustomer(customerId);
+		dto.setPort(environment.getProperty("server.port"));
+		return dto;
 	}
 }

@@ -12,6 +12,8 @@ public class CustomerDto {
 	private String name;
 
 	private String description;
+	
+	private String port;
 
 	@JsonProperty("image_url")
 	private String imageUrl;

@@ -15,6 +15,8 @@ import javax.persistence.OneToMany;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import lombok.Data;
@@ -30,6 +32,7 @@ public class Question {
 	private String text;
 
 	@OneToMany(mappedBy = "question")
+	@Fetch(value = FetchMode.SUBSELECT)
 	private List<Options> options;
 
 	@Cascade(CascadeType.PERSIST)
@@ -40,6 +43,7 @@ public class Question {
 	@JoinTable(name = "question_tags", 
 			joinColumns = @JoinColumn(name = "question_id"), 
 			inverseJoinColumns = @JoinColumn(name = "tag_id"))
+	@Fetch(value = FetchMode.SUBSELECT)
 	private List<Tag> tags;
 	
 	@Column(nullable = false, unique = true)

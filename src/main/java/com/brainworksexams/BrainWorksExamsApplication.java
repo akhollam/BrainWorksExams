@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Import;
 
 import com.brainworksexams.config.JPAConfig;
@@ -19,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @SpringBootApplication
 @Import(value = {MvcConfig.class, JPAConfig.class, SpringConfig.class, WebSecurityConfig.class, OpenApiConfig.class})
+@EnableEurekaClient
 public class BrainWorksExamsApplication implements CommandLineRunner {
 
 	@Autowired

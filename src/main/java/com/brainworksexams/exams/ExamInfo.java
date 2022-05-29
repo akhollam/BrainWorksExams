@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.stereotype.Component;
+import com.brainworksexams.exceptions.NotFoundException;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +32,7 @@ public class ExamInfo {
 			return opNxtQue.get();
 		}
 
-		return null;
+		throw new NotFoundException("Next question not found.");
 	}
 
 	public ExamQuestion setQuestionAttemped(String queCode, Long answer) {

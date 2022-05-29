@@ -63,7 +63,7 @@ public class UserController {
 		userService.registerExam(authentication.getName(), examCode);
 	}
 
-	@PostMapping("/{exam_code}/start-exam")
+	@PostMapping("/start-exam")
 	@ResponseStatus(code = HttpStatus.CREATED)
 	public ExamAttemptCode startExam(Authentication authentication, @RequestBody ExamCode examCode) {
 		return examAttemptService.startExam(authentication.getName(), examCode.getExamCode());
